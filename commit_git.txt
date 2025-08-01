@@ -8,13 +8,21 @@
 git config user.name "ТвоёИмя"
 git config user.email "твой_email@example.com"
 
- git config user.email "1733lt@gmail.com"
 
 🔹 Если хочешь настроить один раз для всех репозиториев
 git config --global user.name "ТвоёИмя"
 git config --global user.email "твой_email@example.com"
 
-
+🔹🔹 сохраняем изменения из локального репозитория:
 git add .
-
 git commit -m "some fixes"
+git push
+
+🔹cmd или bash:
+git add . && git commit -m "some fixes" && git push
+
+🔹PowerShell:
+git add .; git commit -m "some fixes"; git push
+
+
+
