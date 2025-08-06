@@ -15,7 +15,7 @@ def print_film_results_table(results):
         print(Fore.YELLOW + "Нет данных для отображения.")
         return
 
-    print(Fore.YELLOW + "Результаты поиска фильмов:")
+    print(Fore.YELLOW + "\nРезультаты поиска фильмов:")
     table = PrettyTable()
     table.field_names = ["Название", "Год", "Рейтинг", "Длительность (мин.)"]
     table.align["Название"] = "l"
@@ -37,7 +37,7 @@ def print_genre_results_table(data):
         print(Fore.YELLOW + "Нет данных для отображения.")
         return
 
-    print(Fore.YELLOW + "Фильмы по жанру:")
+    print(Fore.YELLOW + "\nРезультаты поиска фильмов по жанру и диапазону годов:")
     table = PrettyTable()
     table.field_names = ["Название", "Год", "Жанр"]
     table.align["Название"] = "l"
@@ -58,7 +58,7 @@ def print_actor_results_table(data):
         print(Fore.YELLOW + "Нет данных для отображения.")
         return
 
-    print(Fore.YELLOW + "Фильмы с участием актёра:")
+    print(Fore.YELLOW + "\nРезультаты поиска фильмов с участием актёра:")
     table = PrettyTable()
     table.field_names = ["Название", "Год", "Актёр"]
     table.align["Название"] = "l"
@@ -80,7 +80,7 @@ def print_description_results_table(data):
         print(Fore.YELLOW + "Нет данных для отображения.")
         return
 
-    print(Fore.YELLOW + "Поиск по описанию:")
+    print(Fore.YELLOW + "\nРезультаты поиска фильмов по описанию:")
     table = PrettyTable()
     table.field_names = ["Название", "Год", "Описание"]
     table.align["Название"] = "l"
@@ -144,7 +144,7 @@ def print_latest_queries_table(results):
         ts = item["timestamp"].strftime("%Y-%m-%d %H:%M:%S")
         table.add_row([query_type, str(params), ts])
 
-    print(Fore.GREEN + "Последние 5 уникальных запросов:")
+    print(Fore.GREEN + "\nПоследние 5 уникальных запросов:")
     print(Fore.GREEN + str(table))
 
 
@@ -174,7 +174,7 @@ def print_error_log_table(errors):
         msg = err.get("message", "")
         table.add_row([ts_str, source, msg])
 
-    print(Fore.RED + "Последние 5 ошибок:")
+    print(Fore.RED + "\nПоследние 5 ошибок:")
     print(Fore.RED + str(table))
 
 
@@ -191,7 +191,7 @@ def print_top_queries_table(results):
         return
 
     table = PrettyTable()
-    table.field_names = ["Тип запроса", "Параметры", "Частота"]
+    table.field_names = ["Тип запроса", "Параметры", "Частота", "Последний вызов"]
     table.align["Тип запроса"] = "l"
     table.align["Параметры"] = "l"
 
@@ -199,7 +199,9 @@ def print_top_queries_table(results):
         query_type = item["_id"]["query_type"]
         params = item["_id"]["parameters"]
         count = item["count"]
-        table.add_row([query_type, str(params), count])
+        last_used = item.get("last_used")
+        ts_str = last_used.strftime("%Y-%m-%d %H:%M:%S") if last_used else "N/A"
+        table.add_row([query_type, str(params), count, ts_str])
 
-    print(Fore.GREEN + "ТОП 5 популярных запросов:")
+    print(Fore.GREEN + "\nТОП 5 популярных запросов:")
     print(Fore.GREEN + str(table))

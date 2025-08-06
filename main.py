@@ -143,7 +143,6 @@ def keyword_search(connection):
                 print("Нет результатов.")
             break
 
-        print("\nРезультаты поиска:")
         formatted_results = [(film[1], film[2], film[3], film[4]) for film in results] # название - год - рейтинг - длительность
         print_film_results_table(formatted_results)
         total_found += len(results)
@@ -194,7 +193,7 @@ def genre_year_search(connection):
         print("Некорректный жанр.")
         return
 
-    genre = genres_map[genre_input]  # безопасное имя жанра
+    genre = genres_map[genre_input]  # безопасное имя жанра для SQL запроса
 
     try:
         year_start_input = input(f"Начальный год ({year_range[0]} - {year_range[1]}): ").strip()
@@ -204,10 +203,7 @@ def genre_year_search(connection):
         ).strip()
 
         year_start = int(year_start_input)
-        if year_end_input == "":
-            year_end = year_start   # одиночный год
-        else:
-            year_end = int(year_end_input)
+        year_end = int(year_end_input) if year_end_input else year_start
 
     except ValueError as e:
         log_error("genre_year_search", f"ValueError при вводе года: {e}")
@@ -215,23 +211,17 @@ def genre_year_search(connection):
         return
 
     # проверка логики ввода годов выпуска
-    if len(str(year_start)) > 4 or len(str(year_end)) > 4:
-        msg = f"Год состоит более чем из 4 цифр: start={year_start}, end={year_end}"
-        log_error("genre_year_search", msg)
-        print("Год должен состоять максимум из 4 цифр.")
-        return
-
-    if year_start < year_range[0] or year_start > year_range[1]:
-        msg = f"Начальный год {year_start} вне диапазона {year_range[0]} - {year_range[1]}"
-        log_error("genre_year_search", msg)
-        print(f"Начальный год должен быть в диапазоне {year_range[0]} - {year_range[1]}.")
-        return
-
-    if year_end < year_range[0] or year_end > year_range[1]:
-        msg = f"Конечный год {year_end} вне диапазона {year_range[0]} - {year_range[1]}"
-        log_error("genre_year_search", msg)
-        print(f"Конечный год должен быть в диапазоне {year_range[0]} - {year_range[1]}.")
-        return
+    for label, year in [("Начальный год", year_start), ("Конечный год", year_end)]:
+        if len(str(year)) > 4:
+            msg = f"Год состоит более чем из 4 цифр: {label.lower()}={year}"
+            log_error("genre_year_search", msg)
+            print("Год должен состоять максимум из 4 цифр.")
+            return
+        if year < year_range[0] or year > year_range[1]:
+            msg = f"{label} {year} вне диапазона {year_range[0]} - {year_range[1]}"
+            log_error("genre_year_search", msg)
+            print(f"{label} должен быть в диапазоне {year_range[0]} - {year_range[1]}.")
+            return
 
     if year_end < year_start:
         msg = f"Конечный год {year_end} меньше начального года {year_start}"
@@ -253,7 +243,6 @@ def genre_year_search(connection):
                 print("Нет результатов.")
             break
 
-        print("\nРезультаты поиска:")
         formatted = [(f[1], f[2], f[3]) for f in results]  # название - год - жанр
         print_genre_results_table(formatted)
         total_found += len(results)
@@ -298,7 +287,6 @@ def actor_search(connection):
                 print("Фильмы не найдены.")
             break
 
-        print("\nРезультаты поиска:")
         formatted = [(f[0], f[1], f[2]) for f in results] # название - год - актерк
         print_actor_results_table(formatted)    
         total_found += len(results)
@@ -338,7 +326,6 @@ def description_search(connection):
                 print("Ничего не найдено.")
             break
 
-        print("\nРезультаты поиска:")
         formatted = [(f[0], f[1], f[2]) for f in results] # название - год - описание
         print_description_results_table(formatted)
         total_found += len(results)
@@ -386,7 +373,6 @@ def show_popular_queries():
             и выводятся в виде таблицы.
         :return: None (результаты печатаются в консоль)
     """  
-    print("\nТОП 5 популярных запросов:")
     results = get_most_frequent_queries()
     if not results:
         print("Нет данных.")
@@ -400,7 +386,6 @@ def show_latest_queries():
             и выводятся в виде таблицы.
         :return: None (результаты печатаются в консоль)
     """
-    print("\nПоследние 5 уникальных запросов:")
     results = get_last_unique_queries()
     if not results:
         print("Нет данных.")
@@ -414,7 +399,6 @@ def show_last_5_errors():
             и выводятся в виде таблицы.
         :return: None (информация отображается в консоли)
     """
-    print("\nПоследние 5 ошибок:")
     errors = get_last_errors(limit = 5)
     if not errors:
         print("Нет ошибок в журнале.")
