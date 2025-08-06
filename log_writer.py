@@ -9,6 +9,13 @@ errors = db["final_project_errors_170225_DETKOV"]
 
 # запись логов запросов
 def log_search(query_type, parameters, result_count):
+    """
+    Записывает информацию о поисковом запросе в MongoDB.
+        :param query_type: тип запроса (например, "keyword", "genre_year", "actor")
+        :param parameters: словарь с параметрами запроса (например, {"keyword": "matrix"})
+        :param result_count: количество найденных результатов
+        :return: None
+    """
     log_entry = {
         "query_type": query_type,
         "parameters": parameters,
@@ -22,6 +29,12 @@ def log_search(query_type, parameters, result_count):
 
 # запись ошибок
 def log_error(source, message):
+    """
+    Записывает информацию об ошибке в MongoDB.
+        :param source: название функции или компонента, где произошла ошибка
+        :param message: текст сообщения об ошибке
+        :return: None
+    """
     error_entry = {
         "source": source,
         "message": message,
@@ -31,6 +44,4 @@ def log_error(source, message):
         errors.insert_one(error_entry)
     except:
         pass  
-
-# if __name__ == "__main__":
-#     log_error("test_function", "тестовая ошибка для проверки MongoDB")
+    

@@ -7,7 +7,12 @@ queries = db["final_project_queries_170225_DETKOV"]
 errors = db["final_project_errors_170225_DETKOV"]
 
 def get_most_frequent_queries(limit = 5):
-    """ Вывод 5 самых популярных запросов """
+    """
+    Получает список самых популярных поисковых запросов из MongoDB.
+        :param limit: максимальное количество запросов для вывода (по умолчанию 5)
+        :return: список словарей с информацией о запросах, 
+                 включая тип запроса, параметры, количество повторов и время последнего использования
+    """
     return list(
         queries.aggregate([
             {
@@ -26,7 +31,13 @@ def get_most_frequent_queries(limit = 5):
     )
 
 def get_last_unique_queries(limit = 5):
-    """ Вывод 5 последних уникальных запросов """
+    """
+    Получает список последних уникальных поисковых запросов из MongoDB.
+        :param limit: максимальное количество уникальных запросов (по умолчанию 5)
+        :return: список словарей с полями:
+            - _id: словарь с типом запроса и параметрами
+            - timestamp: время последнего выполнения данного уникального запроса
+    """
     return list(
         queries.aggregate([
             {
@@ -44,7 +55,12 @@ def get_last_unique_queries(limit = 5):
     )
 
 def get_last_errors(limit = 5):
-    """ Получение ошибок работы программы """
+    """
+    Получает список последних ошибок, записанных в MongoDB.
+        :param limit: максимальное количество ошибок для вывода (по умолчанию 5)
+        :return: список словарей с информацией об ошибках, 
+            источник (source), сообщение (message) и время (timestamp)
+    """
     return list(
         errors.find()
         .sort("timestamp", -1)

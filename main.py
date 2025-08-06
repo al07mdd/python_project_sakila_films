@@ -11,7 +11,7 @@ from mysql_connector import (
     search_films_by_actor,
     get_film_count_by_year,
     search_films_by_description )
-from log_writer import log_search, log_error
+from log_writer import (log_search, log_error)
 from log_stats import (get_most_frequent_queries, get_last_unique_queries, get_last_errors)
 from formatter import (
     print_film_results_table,
@@ -25,7 +25,13 @@ from formatter import (
 )
 
 def main_menu():
-    """Главное меню приложения."""
+    """ Запускает главное меню консольного приложения.
+            Функция обрабатывает ввод пользователя и предоставляет доступ к:
+            - поиску фильмов,
+            - статистике запросов,
+            - выходу из программы.
+        :return: None (управление осуществляется через цикл while)
+    """
     connection = connect_db()
     if not connection:
         print("Программа завершена из-за ошибки подключения.")
@@ -54,6 +60,10 @@ def main_menu():
 
 
 def menu_films(connection):
+    """ Отображает подменю поиска фильмов и обрабатывает выбор пользователя.
+        :param connection: подключение к базе данных MySQL
+        :return: None 
+    """
     while True:
         print("\nПОИСК ФИЛЬМОВ:")
         print('"0". Назад в главное меню')
@@ -83,6 +93,9 @@ def menu_films(connection):
 
 
 def menu_stats():
+    """ Отображает подменю статистики запросов и обрабатывает выбор пользователя.
+        :return: None 
+    """
     while True:
         print("\nСТАТИСТИКА ЗАПРОСОВ:")
         print('"0". Назад в главное меню')
@@ -105,7 +118,12 @@ def menu_stats():
 
 
 def keyword_search(connection):
-    """Поиск фильмов по ключевому слову."""
+    """ Выполняет поиск фильмов по ключевому слову.
+            Пользователь вводит ключевое слово, после чего выводятся результаты постранично (по 10 фильмов).
+            По завершении поиска запрос сохраняется в MongoDB.
+        :param connection: подключение к базе данных MySQL
+        :return: None (результаты выводятся в консоль и логируются)
+    """
     keyword = input("Введите ключевое слово для поиска: ").strip()
     if not keyword:
         print("Ключевое слово не может быть пустым.")
@@ -140,7 +158,20 @@ def keyword_search(connection):
 
 
 def genre_year_search(connection):
-    """Поиск фильмов по жанру и диапазону годов."""
+    """ Поиск фильмов по жанру и диапазону годов выпуска.
+        Пользователь выбирает жанр из доступного списка и указывает начальный и конечный год
+        (можно ввести только один год для поиска за конкретный год).
+            валидация ввода:
+            - проверка существования жанра,
+            - проверка, что год является числом,
+            - проверка, что годы входят в допустимый диапазон,
+            - не допускает, чтобы конечный год был меньше начального,
+            - проверяет, что год состоит максимум из 4 цифр.
+        Результаты выводятся постранично (по 10 фильмов).
+        По завершении поиска запрос сохраняется в MongoDB.
+        :param connection: подключение к базе данных MySQL
+        :return: None (результаты выводятся в консоль и логируются)
+    """
     genres = get_all_genres(connection)
     if not genres:
         log_error("genre_year_search", "Список жанров = None")
@@ -242,7 +273,12 @@ def genre_year_search(connection):
 
 
 def actor_search(connection):
-    """Поиск фильмов по имени актёра."""
+    """ Поиск фильмов по имени и/или фамилии актёра (без учёта регистра).
+            Пользователь вводит часть имени или фамилии актёра, результаты выводятся постранично (по 10 фильмов).
+            По завершении поиска запрос сохраняется в MongoDB.
+        :param connection: подключение к базе данных MySQL
+        :return: None (результаты выводятся в консоль и логируются)
+    """
     actor_input = input("Введите имя, фамилию актера или их часть: ").strip()
     if not actor_input:
         print("Имя актёра не может быть пустым.")
@@ -277,7 +313,12 @@ def actor_search(connection):
 
 
 def description_search(connection):
-    """Поиск фильмов по ключевому слову в описании."""
+    """ Поиск фильмов по ключевому слову в описании.
+            Пользователь вводит ключевое слово, результаты выводятся постранично (по 10 фильмов).
+            По завершении поиска запрос сохраняется в MongoDB.
+        :param connection: подключение к базе данных MySQL
+        :return: None (результаты выводятся в консоль и логируются)
+    """
     keyword = input("Введите ключевое слово из описания: ").strip()
     if not keyword:
         print("Ключевое слово не может быть пустым.")
@@ -312,7 +353,11 @@ def description_search(connection):
 
 
 def show_film_stats_by_year(connection):
-    """Отображение графика количества фильмов по годам."""
+    """ Отображает график количества фильмов по годам выпуска.
+            Данные берутся из MySQL и строятся с помощью matplotlib.
+        :param connection: подключение к базе данных MySQL
+        :return: None (результат отображается в виде графика)
+    """
     data = get_film_count_by_year(connection)
     if data is None:
         log_error("show_film_stats_by_year", "Отображение графика количества фильмов по годам = None")
@@ -336,7 +381,11 @@ def show_film_stats_by_year(connection):
 
 
 def show_popular_queries():
-    """ Получение ТОП 5 популярных запросов. """
+    """ Отображает ТОП-5 популярных поисковых запросов из MongoDB.
+            Данные извлекаются функцией get_most_frequent_queries()
+            и выводятся в виде таблицы.
+        :return: None (результаты печатаются в консоль)
+    """  
     print("\nТОП 5 популярных запросов:")
     results = get_most_frequent_queries()
     if not results:
@@ -346,7 +395,11 @@ def show_popular_queries():
 
 
 def show_latest_queries():
-    """ Получение 5 последних уникальных запросов. """
+    """ Отображает последние 5 уникальных поисковых запросов из MongoDB.
+            Данные извлекаются функцией get_last_unique_queries()
+            и выводятся в виде таблицы.
+        :return: None (результаты печатаются в консоль)
+    """
     print("\nПоследние 5 уникальных запросов:")
     results = get_last_unique_queries()
     if not results:
@@ -356,7 +409,11 @@ def show_latest_queries():
 
 
 def show_last_5_errors():
-    """ Показать последние 5 ошибок. """
+    """ Отображает последние 5 ошибок из MongoDB.
+            Данные извлекаются функцией get_last_errors()
+            и выводятся в виде таблицы.
+        :return: None (информация отображается в консоли)
+    """
     print("\nПоследние 5 ошибок:")
     errors = get_last_errors(limit = 5)
     if not errors:

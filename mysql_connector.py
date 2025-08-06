@@ -17,7 +17,11 @@ config = {
 
 
 def connect_db():
-    """Подключение к MySQL."""
+    """
+    Устанавливает подключение к базе данных MySQL.
+        :return: объект подключения к базе данных (pymysql.Connection) 
+                 или None в случае ошибки.
+    """
     try:
         connection = pymysql.connect(**config)
         return connection

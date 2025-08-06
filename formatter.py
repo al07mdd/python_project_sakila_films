@@ -1,13 +1,21 @@
 # ● formatter.py — функции форматирования вывода (таблицы)
 
 from prettytable import PrettyTable
+from colorama import Fore, Style, init
+
+init(autoreset=True) # сброс цветного форматирования, после каждого print
 
 def print_film_results_table(results):
-    """ Вывод списка фильмов в виде таблицы (название, год, рейтинг, длительность). """
+    """
+    Отображает список фильмов в виде таблицы (название, год, рейтинг, длительность).
+        :param results: список кортежей (title, release_year, rating, length)
+        :return: None (вывод осуществляется в консоль)
+    """
     if not results:
-        print("Нет данных для отображения.")
+        print(Fore.YELLOW + "Нет данных для отображения.")
         return
 
+    print(Fore.YELLOW + "Результаты поиска фильмов:")
     table = PrettyTable()
     table.field_names = ["Название", "Год", "Рейтинг", "Длительность (мин.)"]
     table.align["Название"] = "l"
@@ -16,15 +24,20 @@ def print_film_results_table(results):
     for row in results:
         table.add_row(row)
 
-    print(table)
+    print(Fore.YELLOW + str(table))
 
 
 def print_genre_results_table(data):
-    """Вывод результатов поиска по жанру и годам (название, год, жанр)"""
+    """
+    Отображает результаты поиска фильмов по жанру и диапазону годов в виде таблицы (название, год, жанр).
+        :param data: список кортежей (title, release_year, genre)
+        :return: None (результаты выводятся в консоль)
+    """
     if not data:
-        print("Нет данных для отображения.")
+        print(Fore.YELLOW + "Нет данных для отображения.")
         return
 
+    print(Fore.YELLOW + "Фильмы по жанру:")
     table = PrettyTable()
     table.field_names = ["Название", "Год", "Жанр"]
     table.align["Название"] = "l"
@@ -32,14 +45,20 @@ def print_genre_results_table(data):
     for title, year, genre in data:
         table.add_row([title, year, genre])
 
-    print(table)
+    print(Fore.YELLOW + str(table))
+
 
 def print_actor_results_table(data):
-    """Вывод результатов поиска по актёру (название, год, актёр)"""
+    """
+    Отображает список фильмов, найденных по имени актёра, в виде таблицы (название, год, актёр).
+        :param data: список кортежей (title, release_year, actor_full_name)
+        :return: None (результаты выводятся в консоль)
+    """
     if not data:
-        print("Нет данных для отображения.")
+        print(Fore.YELLOW + "Нет данных для отображения.")
         return
 
+    print(Fore.YELLOW + "Фильмы с участием актёра:")
     table = PrettyTable()
     table.field_names = ["Название", "Год", "Актёр"]
     table.align["Название"] = "l"
@@ -48,14 +67,20 @@ def print_actor_results_table(data):
     for title, year, actor in data:
         table.add_row([title, year, actor])
 
-    print(table)
+    print(Fore.YELLOW + str(table))
+
 
 def print_description_results_table(data):
-    """Вывод результатов поиска по описанию (название, год, описание)"""
+    """
+    Отображает результаты поиска фильмов по ключевому слову в описании в виде таблицы (название, год, описание).
+        :param data: список кортежей (title, release_year, description)
+        :return: None (результаты выводятся в консоль; описание обрезается до 100 символов)
+    """
     if not data:
-        print("Нет данных для отображения.")
+        print(Fore.YELLOW + "Нет данных для отображения.")
         return
 
+    print(Fore.YELLOW + "Поиск по описанию:")
     table = PrettyTable()
     table.field_names = ["Название", "Год", "Описание"]
     table.align["Название"] = "l"
@@ -65,14 +90,20 @@ def print_description_results_table(data):
     for title, year, description in data:
         table.add_row([title, year, description])
 
-    print(table)
+    print(Fore.YELLOW + str(table))
+
 
 def print_genre_and_year_info(genres, year_range):
-    """Вывод списка жанров (4 столбца) и диапазона годов."""
+    """
+    Отображает список доступных жанров (в 4 колонки) и диапазон годов выпуска фильмов.
+        :param genres: список строк с названиями жанров, например ["Action", "Drama", "Comedy"]
+        :param year_range: кортеж (min_year, max_year) или None
+        :return: None (результаты выводятся в консоль)
+    """
     if not genres:
-        print("Жанры не найдены.")
+        print(Fore.YELLOW + "Жанры не найдены.")
     else:
-        print("\nДоступные жанры:")
+        print(Fore.YELLOW + "\nДоступные жанры:")
         genres_sorted = sorted(genres)
         col_width = max(len(g) for g in genres_sorted) + 4
 
@@ -81,20 +112,25 @@ def print_genre_and_year_info(genres, year_range):
             g2 = genres_sorted[i + 1] if i + 1 < len(genres_sorted) else ''
             g3 = genres_sorted[i + 2] if i + 2 < len(genres_sorted) else ''
             g4 = genres_sorted[i + 3] if i + 3 < len(genres_sorted) else ''
-            print(f"- {g1.ljust(col_width)}- {g2.ljust(col_width)}- {g3.ljust(col_width)}- {g4}")
+            print(Fore.YELLOW + f"- {g1.ljust(col_width)}- {g2.ljust(col_width)}- {g3.ljust(col_width)}- {g4}")
 
     if not year_range or len(year_range) != 2:
-        print("\nДиапазон лет недоступен.")
+        print(Fore.YELLOW + "\nДиапазон лет недоступен.")
     else:
         min_year, max_year = year_range
-        print(f"\nДиапазон годов выпуска фильмов: {min_year} - {max_year}")
+        print(Fore.YELLOW + f"\nДиапазон годов выпуска фильмов: {min_year} - {max_year}")
 
-from prettytable import PrettyTable
 
 def print_latest_queries_table(results):
-    """Вывод 5 последних уникальных запросов."""
+    """
+    Отображает последние 5 уникальных поисковых запросов в виде таблицы.
+        :param results: список словарей, возвращаемых из MongoDB, где каждый элемент содержит:
+        - _id: словарь с ключами "query_type" и "parameters"
+        - timestamp: время последнего выполнения запроса (datetime)
+        :return: None (результаты выводятся в консоль)
+    """
     if not results:
-        print("Нет данных.")
+        print(Fore.GREEN + "Нет данных.")
         return
 
     table = PrettyTable()
@@ -108,13 +144,21 @@ def print_latest_queries_table(results):
         ts = item["timestamp"].strftime("%Y-%m-%d %H:%M:%S")
         table.add_row([query_type, str(params), ts])
 
-    print("Последние 5 уникальных запросов:")
-    print(table)
+    print(Fore.GREEN + "Последние 5 уникальных запросов:")
+    print(Fore.GREEN + str(table))
+
 
 def print_error_log_table(errors):
-    """Вывод последних 5 ошибок."""
+    """
+    Отображает последние 5 ошибок программы в виде таблицы.
+        :param errors: список словарей с информацией об ошибках, где каждый словарь может содержать:
+        - timestamp: время возникновения ошибки (datetime или строка)
+        - source / function: источник или название функции, вызвавшей ошибку
+        - message: текст сообщения об ошибке
+        :return: None (результаты выводятся в консоль; сообщение обрезается до 60 символов)
+    """
     if not errors:
-        print("Нет ошибок в журнале.")
+        print(Fore.GREEN + "Нет ошибок в журнале.")
         return
 
     table = PrettyTable()
@@ -130,13 +174,20 @@ def print_error_log_table(errors):
         msg = err.get("message", "")
         table.add_row([ts_str, source, msg])
 
-    print("Последние 5 ошибок:")
-    print(table)
+    print(Fore.RED + "Последние 5 ошибок:")
+    print(Fore.RED + str(table))
+
 
 def print_top_queries_table(results):
-    """Вывод топ-5 популярных запросов."""
+    """
+    Отображает топ-5 популярных поисковых запросов в виде таблицы.
+        :param results: список словарей, возвращаемых из MongoDB, где каждый элемент содержит:
+        - _id: словарь с ключами "query_type" и "parameters"
+        - count: количество выполнений данного запроса
+        :return: None (результаты выводятся в консоль)
+    """
     if not results:
-        print("Нет данных.")
+        print(Fore.GREEN + "Нет данных.")
         return
 
     table = PrettyTable()
@@ -150,5 +201,5 @@ def print_top_queries_table(results):
         count = item["count"]
         table.add_row([query_type, str(params), count])
 
-    print("ТОП 5 популярных запросов:")
-    print(table)
+    print(Fore.GREEN + "ТОП 5 популярных запросов:")
+    print(Fore.GREEN + str(table))
